@@ -1,6 +1,5 @@
 import { RoleEntity } from '@/domains/entities';
 
-console.log(process.env.BANED_WORDS);
 const USER_CONFIG = {
   desc: {
     maxLength: 200,

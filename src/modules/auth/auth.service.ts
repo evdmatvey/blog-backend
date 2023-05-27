@@ -30,7 +30,6 @@ export class AuthService {
         token: this.jwtService.sign({ id: userData.id }),
       };
     } catch (err) {
-      console.log(err);
       throw new ForbiddenException('Ошибка при регистрации');
     }
   }
