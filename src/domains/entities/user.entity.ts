@@ -95,7 +95,9 @@ export class UserEntity {
       password.length >= USER_CONFIG.password.minLength &&
       password.length <= USER_CONFIG.password.maxLength;
 
-    return isPasswordAnother && isPasswordLengthValid;
+    const isSpacesInPassword = [...password].includes(' ');
+
+    return isPasswordAnother && isPasswordLengthValid && !isSpacesInPassword;
   }
 
   private _validateUserDesc(desc: string): boolean {
