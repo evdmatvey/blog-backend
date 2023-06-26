@@ -88,7 +88,7 @@ describe('UpdateUserService', () => {
   });
 
   it('should throw desc error', async () => {
-    desc = 'Ну ты и дурак';
+    desc = 'https://some-site.com';
 
     const command: UpdateUserCommand = new UpdateUserCommand(
       userId,

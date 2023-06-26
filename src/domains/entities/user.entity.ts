@@ -1,6 +1,5 @@
 import { RoleEntity } from '@/domains/entities';
 
-console.log(process.env.BANED_WORDS);
 const USER_CONFIG = {
   desc: {
     maxLength: 200,
@@ -57,7 +56,7 @@ export class UserEntity {
     }
   }
 
-  public updateUserPassword(password: string): void | never {
+  public updatePassword(password: string): void | never {
     if (this._validateUserPassword(password)) {
       this._password = password;
     } else {
@@ -96,7 +95,9 @@ export class UserEntity {
       password.length >= USER_CONFIG.password.minLength &&
       password.length <= USER_CONFIG.password.maxLength;
 
-    return isPasswordAnother && isPasswordLengthValid;
+    const isSpacesInPassword = [...password].includes(' ');
+
+    return isPasswordAnother && isPasswordLengthValid && !isSpacesInPassword;
   }
 
   private _validateUserDesc(desc: string): boolean {
