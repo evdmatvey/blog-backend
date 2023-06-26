@@ -56,7 +56,7 @@ export class UserEntity {
     }
   }
 
-  public updateUserPassword(password: string): void | never {
+  public updatePassword(password: string): void | never {
     if (this._validateUserPassword(password)) {
       this._password = password;
     } else {

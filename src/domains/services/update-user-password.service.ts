@@ -10,7 +10,7 @@ export class UpdateUserPasswordService implements UpdateUserPasswordUseCase {
     command: UpdateUserPasswordCommand,
   ): Promise<UserEntity> {
     const user = await this._userRepository.loadUser(command.userId);
-    user.updateUserPassword(command.password);
+    user.updatePassword(command.password);
 
     await this._userRepository.updateUser(user);
 
