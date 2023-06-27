@@ -1,5 +1,5 @@
-import { CreateTagCommand, CreateTagUseCase } from '../ports/in';
 import { TagEntity } from '@/domains/entities';
+import { CreateTagCommand, CreateTagUseCase } from '@/domains/ports/in';
 import { TagRepositoryPort } from '@/domains/ports/out';
 
 export class CreateTagService implements CreateTagUseCase {
@@ -8,7 +8,9 @@ export class CreateTagService implements CreateTagUseCase {
   async createTag(command: CreateTagCommand): Promise<TagEntity> {
     const tag = new TagEntity(command.id, command.title);
     tag.create();
-    const createdTag = await this._tagRepository.create(tag.getTagData().title);
+    const createdTag = await this._tagRepository.create({
+      title: tag.getTagData().title,
+    });
 
     return createdTag;
   }
