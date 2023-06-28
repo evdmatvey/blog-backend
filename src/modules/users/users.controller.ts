@@ -34,15 +34,20 @@ export class UsersController {
 
   @Put('/update')
   @UseGuards(JwtAuthGuard)
-  update(@UserId() id: string, @Body() dto: UpdateUserDto) {
+  async update(@UserId() id: string, @Body() dto: UpdateUserDto) {
     const command = new UpdateUserCommand(id, dto.email, dto.desc, dto.avatar);
-    return this._updateUserUseCase.updateUser(command);
+    return (await this._updateUserUseCase.updateUser(command)).getUserData();
   }
 
   @Put('/update/password')
   @UseGuards(JwtAuthGuard)
-  updatePassword(@UserId() id: string, @Body() dto: UpdateUserPasswordDto) {
+  async updatePassword(
+    @UserId() id: string,
+    @Body() dto: UpdateUserPasswordDto,
+  ) {
     const command = new UpdateUserPasswordCommand(id, dto.password);
-    return this._updateUserPasswordUseCase.updateUserPassword(command);
+    return (
+      await this._updateUserPasswordUseCase.updateUserPassword(command)
+    ).getUserData();
   }
 }
