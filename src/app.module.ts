@@ -5,6 +5,8 @@ import { FilesModule } from '@/modules/files/files.module';
 import { AuthModule } from '@/modules/auth/auth.module';
 import { UsersModule } from '@/modules/users/users.module';
 import { UserOrmEntity } from '@/modules/users/entities/user.entity';
+import { TagsModule } from '@/modules/tags/tags.module';
+import { TagOrmEntity } from '@/modules/tags/entities/tag.entity';
 
 @Module({
   imports: [
@@ -16,12 +18,13 @@ import { UserOrmEntity } from '@/modules/users/entities/user.entity';
       username: process.env.DB_USER,
       password: process.env.DB_PASSWORD,
       database: process.env.DB_NAME,
-      entities: [UserOrmEntity],
+      entities: [UserOrmEntity, TagOrmEntity],
       synchronize: true,
     }),
     UsersModule,
     FilesModule,
     AuthModule,
+    TagsModule,
   ],
 })
 export class AppModule {}

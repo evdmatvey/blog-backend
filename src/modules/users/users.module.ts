@@ -1,8 +1,5 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { UsersRepository } from './users.repository';
-import { UsersController } from './users.controller';
-import { UserOrmEntity } from './entities/user.entity';
 import {
   UpdateUserUseCaseSymbol,
   UpdateUserPasswordUseCaseSymbol,
@@ -12,6 +9,9 @@ import {
   UpdateUserPasswordService,
 } from '@/domains/services';
 import { UserRepositoryPort } from '@/domains/ports/out/user-repository.port';
+import { UserOrmEntity } from './entities/user.entity';
+import { UsersController } from './users.controller';
+import { UsersRepository } from './users.repository';
 
 @Module({
   controllers: [UsersController],
@@ -40,7 +40,6 @@ import { UserRepositoryPort } from '@/domains/ports/out/user-repository.port';
       inject: [UsersRepository],
     },
   ],
-
   exports: [UsersRepository, TypeOrmModule],
   imports: [TypeOrmModule.forFeature([UserOrmEntity])],
 })
