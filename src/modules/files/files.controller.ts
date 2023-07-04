@@ -5,6 +5,8 @@ import {
   UploadedFile,
   MaxFileSizeValidator,
   ParseFilePipe,
+  Delete,
+  Query,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { ApiTags, ApiConsumes, ApiBody } from '@nestjs/swagger';
@@ -43,5 +45,10 @@ export class FilesController {
     file: Express.Multer.File,
   ) {
     return this.filesService.create(file);
+  }
+
+  @Delete(':filename')
+  delete(@Query('filename') filename: string) {
+    return this.filesService.delete(filename);
   }
 }
