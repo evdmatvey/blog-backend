@@ -30,7 +30,9 @@ describe('CreateTagService', () => {
     const command: CreateTagCommand = new CreateTagCommand(tagId, tagTitle);
     await createTagService.createTag(command);
 
-    expect(tagRepositoryPort.create).toHaveBeenCalledWith('#' + tagTitle);
+    expect(tagRepositoryPort.create).toHaveBeenCalledWith({
+      title: '#' + tagTitle,
+    });
   });
 
   it('should create tag again', async () => {
@@ -39,9 +41,9 @@ describe('CreateTagService', () => {
     const command: CreateTagCommand = new CreateTagCommand(tagId, tagTitle);
     await createTagService.createTag(command);
 
-    expect(tagRepositoryPort.create).toHaveBeenCalledWith(
-      '#' + tagTitle.replace(/#/g, ''),
-    );
+    expect(tagRepositoryPort.create).toHaveBeenCalledWith({
+      title: '#' + tagTitle.replace(/#/g, ''),
+    });
   });
 
   it('should throw title length error', async () => {
