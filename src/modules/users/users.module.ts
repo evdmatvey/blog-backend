@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common';
-import { TypeOrmModule } from '@nestjs/typeorm';
+import { MongooseModule } from '@nestjs/mongoose';
 import {
   UpdateUserUseCaseSymbol,
   UpdateUserPasswordUseCaseSymbol,
@@ -9,9 +9,9 @@ import {
   UpdateUserPasswordService,
 } from '@/domains/services';
 import { UserRepositoryPort } from '@/domains/ports/out/user-repository.port';
-import { UserOrmEntity } from './entities/user.entity';
 import { UsersController } from './users.controller';
 import { UsersRepository } from './users.repository';
+import { User, userSchema } from './entities/user.entity';
 
 @Module({
   controllers: [UsersController],
@@ -40,7 +40,9 @@ import { UsersRepository } from './users.repository';
       inject: [UsersRepository],
     },
   ],
-  exports: [UsersRepository, TypeOrmModule],
-  imports: [TypeOrmModule.forFeature([UserOrmEntity])],
+  exports: [UsersRepository],
+  imports: [
+    MongooseModule.forFeature([{ name: User.name, schema: userSchema }]),
+  ],
 })
 export class UsersModule {}

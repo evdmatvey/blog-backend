@@ -1,5 +1,15 @@
+interface CreateTagRequest {
+  title: string;
+}
+
+type CreateTagResponse = CreateTagRequest;
+
 export class TagEntity {
   constructor(private readonly _id: string, private _title: string) {}
+
+  static create(data: CreateTagRequest): CreateTagResponse {
+    return { title: data.title };
+  }
 
   public getTagData() {
     return {
@@ -8,38 +18,7 @@ export class TagEntity {
     };
   }
 
-  public create() {
-    if (!this._validateTitle(this._title)) {
-      return this._throwTitleLengthError();
-    }
-    this._title = this._normalizeTitle(this._title);
-  }
-
   public update(title: string) {
-    if (this._validateTitle(title)) {
-      title = this._normalizeTitle(title);
-      this._title = title;
-    } else {
-      return this._throwTitleLengthError();
-    }
-  }
-
-  private _normalizeTitle(title: string) {
-    if (title.includes('#')) {
-      title = title.replace(/#/g, '').trim();
-    }
-    return '#' + title;
-  }
-
-  private _validateTitle(title: string) {
-    if (title.trim().length <= 1) {
-      return false;
-    }
-
-    return true;
-  }
-
-  private _throwTitleLengthError(): never {
-    throw new Error('Длина названия тега должна быть больше 1');
+    this._title = title;
   }
 }

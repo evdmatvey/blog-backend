@@ -1,24 +1,12 @@
-import {
-  Entity,
-  PrimaryGeneratedColumn,
-  Unique,
-  Column,
-  CreateDateColumn,
-  UpdateDateColumn,
-} from 'typeorm';
+import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import { Document } from 'mongoose';
 
-@Entity('tags')
-@Unique(['title'])
-export class TagOrmEntity {
-  @PrimaryGeneratedColumn('uuid')
-  id: string;
+export type tagDocument = Tag & Document;
 
-  @Column()
+@Schema()
+export class Tag {
+  @Prop({ unique: true, required: true })
   title: string;
-
-  @CreateDateColumn()
-  createdAt: string;
-
-  @UpdateDateColumn()
-  updatedAt?: string;
 }
+
+export const tagSchema = SchemaFactory.createForClass(Tag);

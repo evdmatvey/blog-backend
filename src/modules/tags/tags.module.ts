@@ -1,9 +1,9 @@
 import { Module } from '@nestjs/common';
-import { TypeOrmModule } from '@nestjs/typeorm';
+import { MongooseModule } from '@nestjs/mongoose';
 import { CreateTagUseCaseSymbol } from '@/domains/ports/in';
 import { CreateTagService } from '@/domains/services/create-tag.service';
 import { TagRepositoryPort } from '@/domains/ports/out';
-import { TagOrmEntity } from './entities/tag.entity';
+import { Tag, tagSchema } from './entities/tag.entity';
 import { TagsController } from './tags.controller';
 import { TagsRepository } from './tags.repository';
 
@@ -23,7 +23,7 @@ import { TagsRepository } from './tags.repository';
       inject: [TagsRepository],
     },
   ],
-  exports: [TagsRepository, TypeOrmModule],
-  imports: [TypeOrmModule.forFeature([TagOrmEntity])],
+  exports: [TagsRepository],
+  imports: [MongooseModule.forFeature([{ name: Tag.name, schema: tagSchema }])],
 })
 export class TagsModule {}

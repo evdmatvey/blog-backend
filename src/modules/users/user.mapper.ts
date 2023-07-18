@@ -1,8 +1,17 @@
 import { RoleEntity, UserEntity } from '@/domains/entities';
-import { UserOrmEntity } from './entities/user.entity';
+
+interface UserData {
+  _id: string;
+  email: string;
+  password: string;
+  nickname: string;
+  desc: string;
+  avatar: string;
+  role: 'user' | 'author' | 'admin';
+}
 
 export class UserMapper {
-  static mapToDomain(user: UserOrmEntity): UserEntity {
+  static mapToDomain(user: UserData): UserEntity {
     const role = UserMapper.mapRoleToDomain(user.role);
     return new UserEntity(
       user.email,
@@ -10,10 +19,8 @@ export class UserMapper {
       user.desc,
       user.avatar,
       role,
-      user.id,
+      user._id,
       user.nickname,
-      user.createdAt,
-      user.updatedAt,
     );
   }
 
