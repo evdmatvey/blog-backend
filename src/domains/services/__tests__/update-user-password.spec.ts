@@ -40,7 +40,7 @@ describe('UpdateUserPasswordService', () => {
   it('should update password', async () => {
     const password = 'newpassword';
     const command: UpdateUserPasswordCommand = new UpdateUserPasswordCommand(
-      user.id,
+      user.getUserData().id,
       password,
     );
 
@@ -57,7 +57,7 @@ describe('UpdateUserPasswordService', () => {
   it('should throw password error', async () => {
     const password = 'new password';
     const command: UpdateUserPasswordCommand = new UpdateUserPasswordCommand(
-      user.id,
+      user.getUserData().id,
       password,
     );
 

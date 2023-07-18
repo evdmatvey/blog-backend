@@ -1,9 +1,13 @@
 import { TagEntity } from '@/domains/entities';
-import { TagOrmEntity } from './entities/tag.entity';
+
+interface TagData {
+  _id: string;
+  title: string;
+}
 
 export class TagMapper {
-  static mapToDomain(tag: TagOrmEntity): TagEntity {
-    const mappedTag = new TagEntity(tag.id, tag.title);
+  static mapToDomain(tag: TagData): TagEntity {
+    const mappedTag = new TagEntity(tag._id, tag.title);
 
     return mappedTag;
   }

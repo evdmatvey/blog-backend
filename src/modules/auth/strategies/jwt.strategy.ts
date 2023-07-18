@@ -5,7 +5,7 @@ import { UsersRepository } from '@/modules/users/users.repository';
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
-  constructor(private readonly userRepository: UsersRepository) {
+  constructor(private readonly _userRepository: UsersRepository) {
     super({
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
       ignoreExpiration: false,
@@ -14,7 +14,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
   }
 
   async validate(payload: { id: string }) {
-    const user = await this.userRepository.findById(payload.id);
+    const user = await this._userRepository.findById(payload.id);
 
     if (!user) {
       throw new UnauthorizedException('У вас нет доступа');
@@ -22,6 +22,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
 
     return {
       id: user.id,
+      role: user.role,
     };
   }
 }

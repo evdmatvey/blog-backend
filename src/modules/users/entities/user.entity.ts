@@ -1,39 +1,28 @@
-import {
-  Entity,
-  PrimaryGeneratedColumn,
-  Unique,
-  Column,
-  CreateDateColumn,
-  UpdateDateColumn,
-} from 'typeorm';
+import { RoleEntity } from '@/domains/entities';
+import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import { Document } from 'mongoose';
 
-@Entity('users')
-@Unique(['email', 'nickname'])
-export class UserOrmEntity {
-  @PrimaryGeneratedColumn('uuid')
-  id: string;
+export type userDocument = User & Document;
 
-  @Column()
+@Schema()
+export class User {
+  @Prop({ unique: true, required: true })
   email: string;
 
-  @Column()
+  @Prop({ unique: true, required: true })
   nickname: string;
 
-  @Column()
+  @Prop({ required: true })
   password: string;
 
-  @Column()
+  @Prop({ default: '' })
   desc: string;
 
-  @Column()
+  @Prop({ default: RoleEntity.USER })
+  role: RoleEntity;
+
+  @Prop({ default: '/uploads/avatar.png' })
   avatar: string;
-
-  @Column()
-  role: 'user' | 'author' | 'admin';
-
-  @CreateDateColumn()
-  createdAt: string;
-
-  @UpdateDateColumn()
-  updatedAt?: string;
 }
+
+export const userSchema = SchemaFactory.createForClass(User);
