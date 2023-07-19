@@ -32,6 +32,10 @@ export class UsersController {
     return this.usersRepository.findById(id);
   }
 
+  getAll() {
+    return this.usersRepository.getAll();
+  }
+
   @Put('/update')
   @UseGuards(JwtAuthGuard)
   async update(@UserId() id: string, @Body() dto: UpdateUserDto) {

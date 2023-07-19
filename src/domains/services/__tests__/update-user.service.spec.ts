@@ -49,7 +49,7 @@ describe('UpdateUserService', () => {
 
   it('should update user', async () => {
     const command: UpdateUserCommand = new UpdateUserCommand(
-      user.id,
+      user.getUserData().id,
       email,
       desc,
       avatar,
@@ -82,13 +82,13 @@ describe('UpdateUserService', () => {
       await updateUserService.updateUser(command);
     } catch (error) {
       expect(userRepositoryPort.loadUser).toHaveBeenCalledWith(userId);
-      expect(error.message).toBe('Новый email не валиден');
+      expect(error.message).toBe('Новый email не валиден!');
       expect(user.getUserData().email).toBe('oldemail@example.com');
     }
   });
 
   it('should throw desc error', async () => {
-    desc = 'https://some-site.com';
+    desc = new Array(210).fill('1').join('');
 
     const command: UpdateUserCommand = new UpdateUserCommand(
       userId,
@@ -102,7 +102,9 @@ describe('UpdateUserService', () => {
       await updateUserService.updateUser(command);
     } catch (error) {
       expect(userRepositoryPort.loadUser).toHaveBeenCalledWith(userId);
-      expect(error.message).toBe('Новое описание не валидно');
+      expect(error.message).toBe(
+        'Укажите описание, длина которого меньше 200!',
+      );
       expect(user.getUserData().desc).toBe('old description');
     }
   });
@@ -122,7 +124,7 @@ describe('UpdateUserService', () => {
       await updateUserService.updateUser(command);
     } catch (error) {
       expect(userRepositoryPort.loadUser).toHaveBeenCalledWith(userId);
-      expect(error.message).toBe('Новый аватар не валиден');
+      expect(error.message).toBe('Новый аватар не валиден!');
       expect(user.getUserData().avatar).toBe('/uploads/old-avatar.jpg');
     }
   });
