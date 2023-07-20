@@ -1,10 +1,10 @@
-import { TagEntity } from '@/domains/entities';
+import { TagEntity, UserId } from '@/domains/entities';
 import { PostStatus } from '@/domains/entities';
+import { User } from '@/modules/users/entities/user.entity';
 
 export class CreatePostCommand {
   constructor(
-    private readonly _id: string,
-    private readonly _author: string,
+    private readonly _authorId: UserId,
     private readonly _title: string,
     private readonly _desc: string,
     private readonly _image: string,
@@ -13,12 +13,8 @@ export class CreatePostCommand {
     private readonly _status: PostStatus,
   ) {}
 
-  public get id(): string {
-    return this._id;
-  }
-
-  public get author(): string {
-    return this._author;
+  public get authorId(): UserId {
+    return this._authorId;
   }
 
   public get title(): string {

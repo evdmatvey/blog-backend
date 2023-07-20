@@ -23,13 +23,13 @@ describe('UpdateUserService', () => {
     updateUserService = new UpdateUserService(userRepositoryPort);
 
     user = new UserEntity(
+      'some-id',
+      'nickname',
       'oldemail@example.com',
       'password',
       'old description',
       '/uploads/old-avatar.jpg',
       null,
-      'some-id',
-      'nickname',
     );
 
     userId = 'some-id';

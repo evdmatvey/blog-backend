@@ -7,13 +7,13 @@ export class UserMapper {
   static mapToDomain(user: UserData): UserEntity {
     const role = UserMapper.mapRoleToDomain(user.role);
     return new UserEntity(
+      user._id,
+      user.nickname,
       user.email,
       user.password,
       user.desc,
       user.avatar,
       role,
-      user._id,
-      user.nickname,
     );
   }
 

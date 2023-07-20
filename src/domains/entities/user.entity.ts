@@ -1,16 +1,17 @@
 import { RoleEntity } from '@/domains/entities';
 
+export type UserId = string;
+
 export class UserEntity {
   constructor(
+    private readonly _id: UserId,
+    private readonly _nickname: string,
     private _email: string,
     private _password: string,
     private _desc: string,
     private _avatar: string,
     private _role: RoleEntity,
-    private readonly _id: string,
-    private readonly _nickname: string,
     private readonly _createdAt?: string,
-    private readonly _updatedAt?: string,
   ) {}
 
   public getUserData() {
@@ -23,7 +24,6 @@ export class UserEntity {
       avatar: this._avatar,
       role: this._role,
       createdAt: this._createdAt,
-      updatedAt: this._updatedAt,
     };
   }
 
