@@ -32,8 +32,17 @@ export class CreatePostService implements CreatePostUseCase {
             'Длина текста новой статьи должна быть больше 200 симболов!',
         },
       });
+      const { authorId, desc, image, status, tags, text, title } = command;
 
-      const createdPost = await this._postRepository.create(command);
+      const createdPost = await this._postRepository.create({
+        authorId,
+        desc,
+        image,
+        status,
+        tags,
+        text,
+        title,
+      });
 
       return createdPost;
     } catch (error) {

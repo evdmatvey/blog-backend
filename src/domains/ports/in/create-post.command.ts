@@ -8,7 +8,7 @@ export class CreatePostCommand {
     private readonly _title: string,
     private readonly _desc: string,
     private readonly _image: string,
-    private readonly _tags: TagEntity[],
+    private readonly _tags: string[],
     private readonly _text: string,
     private readonly _status: PostStatus,
   ) {}
@@ -29,7 +29,7 @@ export class CreatePostCommand {
     return this._image;
   }
 
-  public get tags(): TagEntity[] {
+  public get tags(): string[] {
     return this._tags;
   }
 

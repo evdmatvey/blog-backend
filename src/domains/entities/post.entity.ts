@@ -10,14 +10,13 @@ export class PostEntity {
     private _title: string,
     private _desc: string,
     private _image: string,
-    private _tags: TagEntity[],
+    private _tags: string[],
     private _text: string,
     private _status: PostStatus,
     private _createdAt?: Date,
   ) {}
 
   public getPostData() {
-    const tags = this._tags.map((tag) => tag.getTagData());
     return {
       id: this._id,
       authorId: this._authorId,
@@ -26,7 +25,7 @@ export class PostEntity {
       image: this._image,
       text: this._text,
       status: this._status,
-      tags,
+      tags: this._tags,
       createdAt: this._createdAt,
     };
   }

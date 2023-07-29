@@ -63,7 +63,7 @@ describe('CreateUserService', () => {
 
     await createPostService.createPost(command);
 
-    expect(postRepositoryPort.create).toHaveBeenCalledWith(command);
+    expect(postRepositoryPort.create).toHaveBeenCalledWith(postData);
   });
 
   it('should throw title length error', async () => {
