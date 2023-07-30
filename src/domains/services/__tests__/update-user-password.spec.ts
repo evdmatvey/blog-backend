@@ -22,13 +22,13 @@ describe('UpdateUserPasswordService', () => {
     );
 
     user = new UserEntity(
+      userId,
+      'nickname',
       'some@example.com',
       'oldpassword',
       'old description',
       '/uploads/old-avatar.jpg',
       null,
-      userId,
-      'nickname',
     );
   });
 

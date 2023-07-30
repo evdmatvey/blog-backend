@@ -19,7 +19,12 @@ export class TagsRepository implements TagRepositoryPort {
     return TagMapper.mapToDomain(tag);
   }
 
-  async loadTags(): Promise<Tag[]> {
+  async loadTags(): Promise<TagEntity[]> {
+    const tags = await this._repository.find();
+    return tags.map((tag) => TagMapper.mapToDomain(tag));
+  }
+
+  async getAll(): Promise<Tag[]> {
     const tags = await this._repository.find();
     return tags;
   }

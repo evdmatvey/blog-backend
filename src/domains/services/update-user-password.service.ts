@@ -1,8 +1,8 @@
+import { Validation } from '@/utils/validation';
 import { UpdateUserPasswordCommand } from '../ports/in/update-user-password.command';
 import { UpdateUserPasswordUseCase } from '../ports/in/update-user-password.use-case';
 import { UserRepositoryPort } from '../ports/out';
 import { UserEntity } from '../entities';
-import { Validation } from '@/utils/validation';
 
 export class UpdateUserPasswordService implements UpdateUserPasswordUseCase {
   constructor(private readonly _userRepository: UserRepositoryPort) {}

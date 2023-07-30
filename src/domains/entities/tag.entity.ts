@@ -4,6 +4,11 @@ interface CreateTagRequest {
 
 type CreateTagResponse = CreateTagRequest;
 
+export interface TagData {
+  id: string;
+  title: string;
+}
+
 export class TagEntity {
   constructor(private readonly _id: string, private _title: string) {}
 
@@ -11,7 +16,7 @@ export class TagEntity {
     return { title: data.title };
   }
 
-  public getTagData() {
+  public getTagData(): TagData {
     return {
       id: this._id,
       title: this._title,
@@ -20,5 +25,9 @@ export class TagEntity {
 
   public update(title: string) {
     this._title = title;
+  }
+
+  public isSought(search: string) {
+    return this._title.includes(search);
   }
 }

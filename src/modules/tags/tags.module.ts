@@ -1,8 +1,11 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
-import { CreateTagUseCaseSymbol } from '@/domains/ports/in';
-import { CreateTagService } from '@/domains/services/create-tag.service';
+import {
+  CreateTagUseCaseSymbol,
+  SearchTagUseCaseSymbol,
+} from '@/domains/ports/in';
 import { TagRepositoryPort } from '@/domains/ports/out';
+import { SearchTagService, CreateTagService } from '@/domains/services';
 import { Tag, tagSchema } from './entities/tag.entity';
 import { TagsController } from './tags.controller';
 import { TagsRepository } from './tags.repository';
@@ -19,6 +22,17 @@ import { TagsRepository } from './tags.repository';
       provide: CreateTagUseCaseSymbol,
       useFactory: (_tagRepository: TagRepositoryPort) => {
         return new CreateTagService(_tagRepository);
+      },
+      inject: [TagsRepository],
+    },
+    {
+      provide: SearchTagUseCaseSymbol,
+      useClass: SearchTagService,
+    },
+    {
+      provide: SearchTagUseCaseSymbol,
+      useFactory: (_tagRepository: TagRepositoryPort) => {
+        return new SearchTagService(_tagRepository);
       },
       inject: [TagsRepository],
     },
