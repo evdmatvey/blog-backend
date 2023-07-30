@@ -4,23 +4,25 @@ import {
   Post,
   Body,
   Param,
-  HttpException,
-  HttpStatus,
   Inject,
   UseGuards,
+  Query,
 } from '@nestjs/common';
 import { ApiTags, ApiBearerAuth } from '@nestjs/swagger';
 import {
   CreateTagCommand,
   CreateTagUseCase,
   CreateTagUseCaseSymbol,
+  SearchTagCommand,
+  SearchTagUseCase,
+  SearchTagUseCaseSymbol,
 } from '@/domains/ports/in';
-import { CreateTagDto } from './dto/create-tag.dto';
-import { TagsRepository } from './tags.repository';
 import { Roles } from '@/decorators/role.decorator';
 import { RoleEntity } from '@/domains/entities';
 import { RoleGuard } from '../auth/guards/role.guard';
+import { TagsRepository } from './tags.repository';
 import { JwtAuthGuard } from '../auth/guards/jwt.guard';
+import { CreateTagDto } from './dto/create-tag.dto';
 
 @UseGuards(JwtAuthGuard, RoleGuard)
 @Controller('tags')
@@ -30,27 +32,29 @@ export class TagsController {
   constructor(
     @Inject(CreateTagUseCaseSymbol)
     private readonly _createTagUseCase: CreateTagUseCase,
+    @Inject(SearchTagUseCaseSymbol)
+    private readonly _searchTagUseCase: SearchTagUseCase,
     private readonly _tagRepository: TagsRepository,
   ) {}
 
   @Post()
   @Roles([RoleEntity.AUTHOR, RoleEntity.ADMIN])
   async create(@Body() createTagDto: CreateTagDto) {
-    try {
-      const command = new CreateTagCommand(createTagDto.title);
-      const createdTag = await this._createTagUseCase.createTag(command);
-      return createdTag;
-    } catch (error) {
-      throw new HttpException(
-        'Ошибка при создании нового тега. Попробуйте изменить название',
-        HttpStatus.BAD_REQUEST,
-      );
-    }
+    const command = new CreateTagCommand(createTagDto.title);
+    const createdTag = await this._createTagUseCase.createTag(command);
+    return createdTag;
   }
 
   @Get()
   findAll() {
-    return this._tagRepository.loadTags();
+    return this._tagRepository.getAll();
+  }
+
+  @Get('/search')
+  async search(@Query('title') title: string) {
+    const command = new SearchTagCommand(title);
+    const tags = await this._searchTagUseCase.search(command);
+    return tags;
   }
 
   @Get(':id')
