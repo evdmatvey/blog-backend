@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import { Model, Types } from 'mongoose';
 import { TagRepositoryPort } from '@/domains/ports/out';
 import { TagEntity } from '@/domains/entities';
 import { Tag, tagDocument } from './entities/tag.entity';
@@ -24,6 +24,11 @@ export class TagsRepository implements TagRepositoryPort {
     return tags.map((tag) => TagMapper.mapToDomain(tag));
   }
 
+  async getOne(id: string): Promise<Tag> {
+    const tag = await this._repository.findById(id);
+    return tag;
+  }
+
   async getAll(): Promise<Tag[]> {
     const tags = await this._repository.find();
     return tags;
@@ -31,5 +36,9 @@ export class TagsRepository implements TagRepositoryPort {
 
   create(dto: CreateTagDto) {
     return this._repository.create(dto);
+  }
+
+  async delete(id: string) {
+    await this._repository.deleteOne({ _id: new Types.ObjectId(id) });
   }
 }

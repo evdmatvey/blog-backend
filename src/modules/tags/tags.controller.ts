@@ -8,6 +8,8 @@ import {
   Inject,
   UseGuards,
   Query,
+  Delete,
+  ForbiddenException,
 } from '@nestjs/common';
 import { ApiTags, ApiBearerAuth } from '@nestjs/swagger';
 import {
@@ -24,6 +26,10 @@ import { RoleGuard } from '../auth/guards/role.guard';
 import { TagsRepository } from './tags.repository';
 import { JwtAuthGuard } from '../auth/guards/jwt.guard';
 import { CreateTagDto } from './dto/create-tag.dto';
+
+interface Message {
+  msg: string;
+}
 
 @UseGuards(JwtAuthGuard, RoleGuard)
 @Controller('tags')
@@ -61,6 +67,24 @@ export class TagsController {
   @Roles([RoleEntity.ADMIN])
   @Get(':id')
   async findOne(@Param('id') id: string) {
-    return (await this._tagRepository.loadTag(id)).getTagData();
+    const tag = await this._tagRepository.getOne(id);
+
+    if (!tag) throw new ForbiddenException('Произошла ошибка. Тег не найден');
+
+    return tag;
+  }
+
+  @Roles([RoleEntity.ADMIN])
+  @Delete(':id')
+  async delete(@Param('id') id: string): Promise<Message> {
+    try {
+      const tag = (await this._tagRepository.loadTag(id)).getTagData();
+      await this._tagRepository.delete(id);
+
+      return { msg: `Вы успешно удалили тег: ${tag.title}` };
+    } catch (error) {
+      console.error(error);
+      throw new ForbiddenException('Ошибка при удалении тега');
+    }
   }
 }
