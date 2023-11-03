@@ -22,7 +22,6 @@ export class PostsRepository implements PostRepositoryPort {
   }
 
   async create(dto: CreatePostData) {
-    console.log(dto);
     const post = await this._repository.create({
       ...dto,
       author: dto.authorId,

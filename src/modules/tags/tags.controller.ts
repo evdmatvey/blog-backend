@@ -3,6 +3,7 @@ import {
   Get,
   Post,
   Body,
+  Put,
   Param,
   Inject,
   UseGuards,
@@ -57,6 +58,7 @@ export class TagsController {
     return tags;
   }
 
+  @Roles([RoleEntity.ADMIN])
   @Get(':id')
   async findOne(@Param('id') id: string) {
     return (await this._tagRepository.loadTag(id)).getTagData();
