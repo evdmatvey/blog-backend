@@ -1,45 +1,51 @@
 import { ForbiddenException, Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
-import { CreateUserDto } from './dto/create-user.dto';
-import { UserOrmEntity } from './entities/user.entity';
+import { InjectModel } from '@nestjs/mongoose';
+import { Model } from 'mongoose';
 import { UserEntity } from '@/domains/entities';
+import { UserRepositoryPort } from '@/domains/ports/out';
+import { CreateUserDto } from './dto/create-user.dto';
+import { User, userDocument } from './entities/user.entity';
 import { UserMapper } from './user.mapper';
-import { UserRepositoryPort } from '@/domains/ports/out/user-repository.port';
 
 @Injectable()
 export class UsersRepository implements UserRepositoryPort {
   constructor(
-    @InjectRepository(UserOrmEntity)
-    private repository: Repository<UserOrmEntity>,
+    @InjectModel(User.name)
+    private readonly _repository: Model<userDocument>,
   ) {}
 
   async findByEmail(email: string) {
-    return this.repository.findOneBy({ email });
+    return this._repository.findOne({ email });
   }
 
   async findById(id: string) {
-    return this.repository.findOneBy({ id });
+    return this._repository.findById(id);
   }
 
   async loadUser(id: string): Promise<UserEntity> {
-    const user = await this.repository.findOneBy({ id });
+    const user = await this._repository.findById(id);
     return UserMapper.mapToDomain(user);
   }
 
   async create(dto: CreateUserDto) {
-    return this.repository.save({
-      ...dto,
-      role: 'user',
-      avatar: '/uploads/avatar.jpg',
-      desc: '',
-    });
+    return this._repository.create(dto);
+  }
+
+  async getAll() {
+    return this._repository.find();
   }
 
   async updateUser(user: UserEntity) {
     try {
       const updatedUser = user.getUserData();
-      await this.repository.update(user.id, updatedUser);
+      const currentUser = await this._repository.findById(updatedUser.id);
+
+      currentUser.email = updatedUser.email;
+      currentUser.password = updatedUser.password;
+      currentUser.desc = updatedUser.desc;
+      currentUser.avatar = updatedUser.avatar;
+
+      await currentUser.save();
 
       return updatedUser;
     } catch (error) {

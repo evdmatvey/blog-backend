@@ -1,3 +1,4 @@
+import { Validation } from '@/utils/validation';
 import { UpdateUserPasswordCommand } from '../ports/in/update-user-password.command';
 import { UpdateUserPasswordUseCase } from '../ports/in/update-user-password.use-case';
 import { UserRepositoryPort } from '../ports/out';
@@ -10,10 +11,24 @@ export class UpdateUserPasswordService implements UpdateUserPasswordUseCase {
     command: UpdateUserPasswordCommand,
   ): Promise<UserEntity> {
     const user = await this._userRepository.loadUser(command.userId);
-    user.updatePassword(command.password);
+    const isNewPasswordValid = new Validation<typeof command>(command).validate(
+      'password',
+      {
+        required: 'Укажите новый пароль!',
+        length: {
+          min: 6,
+          max: 24,
+          errorMessage: 'Длина нового пароля должна быть от 6 до 24 симболов!',
+        },
+      },
+    );
 
-    await this._userRepository.updateUser(user);
+    if (isNewPasswordValid) {
+      user.updatePassword(command.password);
 
-    return user;
+      await this._userRepository.updateUser(user);
+
+      return user;
+    }
   }
 }

@@ -1,45 +1,33 @@
+interface CreateTagRequest {
+  title: string;
+}
+
+type CreateTagResponse = CreateTagRequest;
+
+export interface TagData {
+  id: string;
+  title: string;
+}
+
 export class TagEntity {
   constructor(private readonly _id: string, private _title: string) {}
 
-  public getTagData() {
+  static create(data: CreateTagRequest): CreateTagResponse {
+    return { title: data.title };
+  }
+
+  public getTagData(): TagData {
     return {
       id: this._id,
       title: this._title,
     };
   }
 
-  public create() {
-    if (!this._validateTitle(this._title)) {
-      return this._throwTitleLengthError();
-    }
-    this._title = this._normalizeTitle(this._title);
-  }
-
   public update(title: string) {
-    if (this._validateTitle(title)) {
-      title = this._normalizeTitle(title);
-      this._title = title;
-    } else {
-      return this._throwTitleLengthError();
-    }
+    this._title = title;
   }
 
-  private _normalizeTitle(title: string) {
-    if (title.includes('#')) {
-      title = title.replace(/#/g, '').trim();
-    }
-    return '#' + title;
-  }
-
-  private _validateTitle(title: string) {
-    if (title.trim().length <= 1) {
-      return false;
-    }
-
-    return true;
-  }
-
-  private _throwTitleLengthError(): never {
-    throw new Error('Длина названия тега должна быть больше 1');
+  public isSought(search: string) {
+    return this._title.includes(search);
   }
 }

@@ -1,11 +1,16 @@
 import { Module } from '@nestjs/common';
-import { TypeOrmModule } from '@nestjs/typeorm';
-import { CreateTagUseCaseSymbol } from '@/domains/ports/in';
-import { CreateTagService } from '@/domains/services/create-tag.service';
+import { MongooseModule } from '@nestjs/mongoose';
+import {
+  CreateTagUseCaseSymbol,
+  SearchTagUseCaseSymbol,
+  UpdateTagUseCaseSymbol,
+} from '@/domains/ports/in';
 import { TagRepositoryPort } from '@/domains/ports/out';
-import { TagOrmEntity } from './entities/tag.entity';
+import { SearchTagService, CreateTagService } from '@/domains/services';
+import { Tag, tagSchema } from './entities/tag.entity';
 import { TagsController } from './tags.controller';
 import { TagsRepository } from './tags.repository';
+import { UpdateTagService } from '@/domains/services/update-tag.service';
 
 @Module({
   controllers: [TagsController],
@@ -22,8 +27,30 @@ import { TagsRepository } from './tags.repository';
       },
       inject: [TagsRepository],
     },
+    {
+      provide: SearchTagUseCaseSymbol,
+      useClass: SearchTagService,
+    },
+    {
+      provide: SearchTagUseCaseSymbol,
+      useFactory: (_tagRepository: TagRepositoryPort) => {
+        return new SearchTagService(_tagRepository);
+      },
+      inject: [TagsRepository],
+    },
+    {
+      provide: UpdateTagUseCaseSymbol,
+      useClass: UpdateTagService,
+    },
+    {
+      provide: UpdateTagUseCaseSymbol,
+      useFactory: (_tagRepository: TagRepositoryPort) => {
+        return new UpdateTagService(_tagRepository);
+      },
+      inject: [TagsRepository],
+    },
   ],
-  exports: [TagsRepository, TypeOrmModule],
-  imports: [TypeOrmModule.forFeature([TagOrmEntity])],
+  exports: [TagsRepository],
+  imports: [MongooseModule.forFeature([{ name: Tag.name, schema: tagSchema }])],
 })
 export class TagsModule {}

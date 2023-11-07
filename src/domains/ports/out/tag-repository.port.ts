@@ -6,5 +6,7 @@ interface CreateTagDto {
 
 export interface TagRepositoryPort {
   loadTag(id: string): Promise<TagEntity>;
+  loadTags(): Promise<TagEntity[]>;
   create(dto: CreateTagDto);
+  update(id: string, title: string): Promise<TagEntity>;
 }
