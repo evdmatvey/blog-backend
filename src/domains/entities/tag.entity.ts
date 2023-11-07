@@ -5,7 +5,7 @@ interface CreateTagRequest {
 type CreateTagResponse = CreateTagRequest;
 
 export interface TagData {
-  id: string;
+  _id: string;
   title: string;
 }
 
@@ -18,7 +18,7 @@ export class TagEntity {
 
   public getTagData(): TagData {
     return {
-      id: this._id,
+      _id: this._id,
       title: this._title,
     };
   }

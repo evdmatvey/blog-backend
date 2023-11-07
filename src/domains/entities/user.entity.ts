@@ -16,7 +16,7 @@ export class UserEntity {
 
   public getUserData() {
     return {
-      id: this._id,
+      _id: this._id,
       email: this._email,
       nickname: this._nickname,
       password: this._password,
