@@ -18,7 +18,7 @@ export class PostEntity {
 
   public getPostData() {
     return {
-      id: this._id,
+      _id: this._id,
       authorId: this._authorId,
       title: this._title,
       desc: this._desc,

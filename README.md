@@ -26,8 +26,8 @@
 - Nest.js
 - jwt
 - Passport.js
-- PostgreSQL
-- TypeOrm
+- MongoDB
+- Mongoose
 - Jest
 - TypeScript
 - Swagger

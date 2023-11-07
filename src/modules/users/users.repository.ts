@@ -38,7 +38,7 @@ export class UsersRepository implements UserRepositoryPort {
   async updateUser(user: UserEntity) {
     try {
       const updatedUser = user.getUserData();
-      const currentUser = await this._repository.findById(updatedUser.id);
+      const currentUser = await this._repository.findById(updatedUser._id);
 
       currentUser.email = updatedUser.email;
       currentUser.password = updatedUser.password;
