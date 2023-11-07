@@ -42,8 +42,19 @@ export class TagsRepository implements TagRepositoryPort {
     await this._repository.deleteOne({ _id: new Types.ObjectId(id) });
   }
 
-  // It will be done when the implementation of the domain service starts
   async update(id: string, title: string): Promise<TagEntity> {
-    return new TagEntity('', '');
+    try {
+      const currentTag = await this._repository.findById(id);
+
+      currentTag.title = title;
+
+      await currentTag.save();
+
+      return new TagEntity(id, title);
+    } catch (error) {
+      throw new Error(
+        'Ошибка при обновлении тега. Возможно передан недействительный id!',
+      );
+    }
   }
 }

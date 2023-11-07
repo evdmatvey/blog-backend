@@ -19,6 +19,10 @@ import {
   SearchTagCommand,
   SearchTagUseCase,
   SearchTagUseCaseSymbol,
+  UpdateTagCommand,
+  UpdateTagUseCase,
+  UpdateTagUseCaseSymbol,
+  UpdateUserCommand,
 } from '@/domains/ports/in';
 import { Roles } from '@/decorators/role.decorator';
 import { RoleEntity } from '@/domains/entities';
@@ -26,6 +30,7 @@ import { RoleGuard } from '../auth/guards/role.guard';
 import { TagsRepository } from './tags.repository';
 import { JwtAuthGuard } from '../auth/guards/jwt.guard';
 import { CreateTagDto } from './dto/create-tag.dto';
+import { UpdateTagDto } from './dto/update-tag.dto';
 
 interface Message {
   msg: string;
@@ -41,6 +46,8 @@ export class TagsController {
     private readonly _createTagUseCase: CreateTagUseCase,
     @Inject(SearchTagUseCaseSymbol)
     private readonly _searchTagUseCase: SearchTagUseCase,
+    @Inject(UpdateTagUseCaseSymbol)
+    private readonly _updateTagUseCase: UpdateTagUseCase,
     private readonly _tagRepository: TagsRepository,
   ) {}
 
@@ -85,6 +92,17 @@ export class TagsController {
     } catch (error) {
       console.error(error);
       throw new ForbiddenException('Ошибка при удалении тега');
+    }
+  }
+
+  @Roles([RoleEntity.ADMIN])
+  @Put(':id')
+  async update(@Param('id') id: string, @Body() dto: UpdateTagDto) {
+    try {
+      const command = new UpdateTagCommand(id, dto.title);
+      return (await this._updateTagUseCase.updateTag(command)).getTagData();
+    } catch (error) {
+      throw new ForbiddenException(error.message);
     }
   }
 }

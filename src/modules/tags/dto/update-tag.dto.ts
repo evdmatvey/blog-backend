@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 
-export class CreateTagDto {
+export class UpdateTagDto {
   @ApiProperty({
     default: 'node.js',
   })
