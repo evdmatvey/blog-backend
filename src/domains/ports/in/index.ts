@@ -8,3 +8,5 @@ export * from './search-tag.command';
 export * from './search-tag.use-case';
 export * from './create-post.command';
 export * from './create-post.use-case';
+export * from './update-tag.command';
+export * from './update-tag.use-case';

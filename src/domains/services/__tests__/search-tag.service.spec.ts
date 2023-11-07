@@ -19,6 +19,7 @@ describe('SearchTagService', () => {
       loadTag: jest.fn(),
       create: jest.fn(),
       loadTags: jest.fn(),
+      update: jest.fn(),
     };
 
     searchTagService = new SearchTagService(tagRepositoryPort);
