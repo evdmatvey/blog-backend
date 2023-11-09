@@ -7,8 +7,9 @@ export type postDocument = Post & Document;
 @Schema({ timestamps: true })
 export class Post {
   @Prop({
-    type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
-    default: {},
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
+    required: true,
   })
   author: ObjectId;
 
