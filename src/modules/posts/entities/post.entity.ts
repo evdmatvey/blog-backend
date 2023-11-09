@@ -4,7 +4,7 @@ import { PostStatus } from '@/domains/entities';
 
 export type postDocument = Post & Document;
 
-@Schema()
+@Schema({ timestamps: true })
 export class Post {
   @Prop({
     type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],

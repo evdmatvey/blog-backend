@@ -90,7 +90,6 @@ export class TagsController {
 
       return { msg: `Вы успешно удалили тег: ${tag.title}` };
     } catch (error) {
-      console.error(error);
       throw new ForbiddenException('Ошибка при удалении тега');
     }
   }
@@ -100,7 +99,8 @@ export class TagsController {
   async update(@Param('id') id: string, @Body() dto: UpdateTagDto) {
     try {
       const command = new UpdateTagCommand(id, dto.title);
-      return (await this._updateTagUseCase.updateTag(command)).getTagData();
+      const tag = await this._updateTagUseCase.updateTag(command);
+      return tag.getTagData();
     } catch (error) {
       throw new ForbiddenException(error.message);
     }

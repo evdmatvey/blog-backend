@@ -27,7 +27,7 @@ export class CreatePostService implements CreatePostUseCase {
 
       postValidation.validate('text', {
         length: {
-          min: 10,
+          min: 200,
           errorMessage:
             'Длина текста новой статьи должна быть больше 200 симболов!',
         },

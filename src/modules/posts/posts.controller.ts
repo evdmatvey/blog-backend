@@ -6,6 +6,7 @@ import {
   Inject,
   Get,
   Query,
+  ForbiddenException,
 } from '@nestjs/common';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { JwtAuthGuard } from '@/modules/auth/guards/jwt.guard';
@@ -34,21 +35,25 @@ export class PostsController {
 
   @Post()
   @Roles([RoleEntity.AUTHOR, RoleEntity.ADMIN])
-  create(@UserId() userId: string, @Body() dto: CreatePostDto) {
-    const { desc, image, tags, text, title } = dto;
-    console.log(userId);
+  async create(@UserId() userId: string, @Body() dto: CreatePostDto) {
+    try {
+      const { desc, image, tags, text, title } = dto;
 
-    const command = new CreatePostCommand(
-      userId,
-      title,
-      desc,
-      image,
-      tags,
-      text,
-      'preview',
-    );
+      const command = new CreatePostCommand(
+        userId,
+        title,
+        desc,
+        image,
+        tags,
+        text,
+        'preview',
+      );
+      const post = await this._createPostUseCase.createPost(command);
 
-    return this._createPostUseCase.createPost(command);
+      return post;
+    } catch (error) {
+      throw new ForbiddenException(error.message);
+    }
   }
 
   @Get(':id')
