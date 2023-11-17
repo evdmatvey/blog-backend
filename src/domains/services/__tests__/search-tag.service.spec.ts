@@ -38,7 +38,7 @@ describe('SearchTagService', () => {
     const result = await searchTagService.search(command);
 
     expect(result.length).toBe(1);
-    expect(result[0].id).toBe('one');
+    expect(result[0]._id).toBe('one');
   });
 
   it('should get one result again', async () => {
@@ -49,7 +49,7 @@ describe('SearchTagService', () => {
     const result = await searchTagService.search(command);
 
     expect(result.length).toBe(1);
-    expect(result[0].id).toBe('one');
+    expect(result[0]._id).toBe('one');
   });
 
   it('should get several results', async () => {
@@ -60,8 +60,8 @@ describe('SearchTagService', () => {
     const result = await searchTagService.search(command);
 
     expect(result.length).toBe(2);
-    expect(result[0].id).toBe('one');
-    expect(result[1].id).toBe('two');
+    expect(result[0]._id).toBe('one');
+    expect(result[1]._id).toBe('two');
   });
 
   it('should not get result', async () => {

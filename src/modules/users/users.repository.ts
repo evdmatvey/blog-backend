@@ -28,7 +28,7 @@ export class UsersRepository implements UserRepositoryPort {
   }
 
   async create(dto: CreateUserDto) {
-    return this._repository.create(dto);
+    return this._repository.create({ ...dto, username: '@' + dto.nickname });
   }
 
   async getAll() {

@@ -11,7 +11,7 @@ import {
   Delete,
   ForbiddenException,
 } from '@nestjs/common';
-import { ApiTags, ApiBearerAuth } from '@nestjs/swagger';
+import { ApiTags, ApiBearerAuth, ApiOkResponse } from '@nestjs/swagger';
 import {
   CreateTagCommand,
   CreateTagUseCase,
@@ -22,7 +22,6 @@ import {
   UpdateTagCommand,
   UpdateTagUseCase,
   UpdateTagUseCaseSymbol,
-  UpdateUserCommand,
 } from '@/domains/ports/in';
 import { Roles } from '@/decorators/role.decorator';
 import { RoleEntity } from '@/domains/entities';
@@ -31,10 +30,7 @@ import { TagsRepository } from './tags.repository';
 import { JwtAuthGuard } from '../auth/guards/jwt.guard';
 import { CreateTagDto } from './dto/create-tag.dto';
 import { UpdateTagDto } from './dto/update-tag.dto';
-
-interface Message {
-  msg: string;
-}
+import { DeleteTagResponse, TagResponse, Message } from './types';
 
 @UseGuards(JwtAuthGuard, RoleGuard)
 @Controller('tags')
@@ -53,6 +49,7 @@ export class TagsController {
 
   @Post()
   @Roles([RoleEntity.AUTHOR, RoleEntity.ADMIN])
+  @ApiOkResponse({ type: TagResponse })
   async create(@Body() createTagDto: CreateTagDto) {
     const command = new CreateTagCommand(createTagDto.title);
     const createdTag = await this._createTagUseCase.createTag(command);
@@ -60,11 +57,13 @@ export class TagsController {
   }
 
   @Get()
+  @ApiOkResponse({ type: TagResponse, isArray: true })
   findAll() {
     return this._tagRepository.getAll();
   }
 
   @Get('/search')
+  @ApiOkResponse({ type: TagResponse, isArray: true })
   async search(@Query('title') title: string) {
     const command = new SearchTagCommand(title);
     const tags = await this._searchTagUseCase.search(command);
@@ -72,6 +71,7 @@ export class TagsController {
   }
 
   @Roles([RoleEntity.ADMIN])
+  @ApiOkResponse({ type: TagResponse })
   @Get(':id')
   async findOne(@Param('id') id: string) {
     const tag = await this._tagRepository.getOne(id);
@@ -83,6 +83,7 @@ export class TagsController {
 
   @Roles([RoleEntity.ADMIN])
   @Delete(':id')
+  @ApiOkResponse({ type: DeleteTagResponse })
   async delete(@Param('id') id: string): Promise<Message> {
     try {
       const tag = (await this._tagRepository.loadTag(id)).getTagData();
@@ -96,6 +97,7 @@ export class TagsController {
 
   @Roles([RoleEntity.ADMIN])
   @Put(':id')
+  @ApiOkResponse({ type: TagResponse })
   async update(@Param('id') id: string, @Body() dto: UpdateTagDto) {
     try {
       const command = new UpdateTagCommand(id, dto.title);

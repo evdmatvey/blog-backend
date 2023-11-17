@@ -9,9 +9,10 @@ import {
   Query,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { ApiTags, ApiConsumes, ApiBody } from '@nestjs/swagger';
+import { ApiTags, ApiConsumes, ApiBody, ApiOkResponse } from '@nestjs/swagger';
 import { FilesService } from './files.service';
 import { fileStorage } from './storage';
+import { CreateFileResponse, DeleteFileResponse } from './types';
 
 @Controller('files')
 @ApiTags('Files')
@@ -25,6 +26,7 @@ export class FilesController {
     }),
   )
   @ApiConsumes('multipart/form-data')
+  @ApiOkResponse({ type: CreateFileResponse })
   @ApiBody({
     schema: {
       type: 'object',
@@ -48,6 +50,7 @@ export class FilesController {
   }
 
   @Delete(':filename')
+  @ApiOkResponse({ type: DeleteFileResponse })
   delete(@Query('filename') filename: string) {
     return this.filesService.delete(filename);
   }

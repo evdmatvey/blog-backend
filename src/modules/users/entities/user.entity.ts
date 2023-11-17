@@ -4,7 +4,7 @@ import { Document } from 'mongoose';
 
 export type userDocument = User & Document;
 
-@Schema()
+@Schema({ timestamps: true })
 export class User {
   @Prop({ unique: true, required: true })
   email: string;
