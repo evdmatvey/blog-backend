@@ -1,5 +1,10 @@
 import { Body, Controller, Get, Inject, Put, UseGuards } from '@nestjs/common';
-import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiBody,
+  ApiOkResponse,
+  ApiTags,
+} from '@nestjs/swagger';
 import { UserId } from '@/decorators/user-id.decorator';
 import { JwtAuthGuard } from '@/modules/auth/guards/jwt.guard';
 import {
@@ -13,6 +18,7 @@ import {
 import { UsersRepository } from './users.repository';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UpdateUserPasswordDto } from './dto/update-user-password.dto';
+import { UserResponse } from './types';
 
 @Controller('users')
 @ApiTags('Users')
@@ -27,6 +33,7 @@ export class UsersController {
   ) {}
 
   @Get('/me')
+  @ApiOkResponse({ type: UserResponse })
   @UseGuards(JwtAuthGuard)
   getMe(@UserId() id: string) {
     return this.usersRepository.findById(id);
@@ -37,6 +44,8 @@ export class UsersController {
   }
 
   @Put('/update')
+  @ApiBody({ type: UpdateUserDto })
+  @ApiOkResponse({ type: UserResponse })
   @UseGuards(JwtAuthGuard)
   async update(@UserId() id: string, @Body() dto: UpdateUserDto) {
     const command = new UpdateUserCommand(id, dto.email, dto.desc, dto.avatar);
@@ -44,6 +53,8 @@ export class UsersController {
   }
 
   @Put('/update/password')
+  @ApiBody({ type: UpdateUserPasswordDto })
+  @ApiOkResponse({ type: UserResponse })
   @UseGuards(JwtAuthGuard)
   async updatePassword(
     @UserId() id: string,

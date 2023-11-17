@@ -1,7 +1,7 @@
 import { RoleEntity, UserEntity } from '@/domains/entities';
 import { User } from './entities/user.entity';
 
-type UserData = { _id: string } & User;
+type UserData = { _id: string; createdAt?: string } & User;
 
 export class UserMapper {
   static mapToDomain(user: UserData): UserEntity {
@@ -14,6 +14,7 @@ export class UserMapper {
       user.desc,
       user.avatar,
       role,
+      user.createdAt,
     );
   }
 

@@ -49,7 +49,7 @@ describe('UpdateUserService', () => {
 
   it('should update user', async () => {
     const command: UpdateUserCommand = new UpdateUserCommand(
-      user.getUserData().id,
+      user.getUserData()._id,
       email,
       desc,
       avatar,
