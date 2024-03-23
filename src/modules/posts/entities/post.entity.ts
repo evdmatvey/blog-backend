@@ -22,6 +22,12 @@ export class Post {
   @Prop()
   image: string;
 
+  @Prop({ default: 0 })
+  views: number;
+
+  @Prop({ default: 0 })
+  likes: number;
+
   @Prop({
     type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Tag' }],
     default: [],

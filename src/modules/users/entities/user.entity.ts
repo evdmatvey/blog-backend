@@ -1,6 +1,6 @@
-import { RoleEntity } from '@/domains/entities';
+import mongoose, { Document, ObjectId } from 'mongoose';
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Document } from 'mongoose';
+import { RoleEntity } from '@/domains/entities';
 
 export type userDocument = User & Document;
 
@@ -23,6 +23,18 @@ export class User {
 
   @Prop({ default: '/uploads/avatar.png' })
   avatar: string;
+
+  @Prop({
+    type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Post' }],
+    default: [],
+  })
+  likedPosts: ObjectId[];
+
+  @Prop({
+    type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Post' }],
+    default: [],
+  })
+  bookmarks: ObjectId[];
 }
 
 export const userSchema = SchemaFactory.createForClass(User);

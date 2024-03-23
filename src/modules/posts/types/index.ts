@@ -1,5 +1,36 @@
 import { PostStatus } from '@/domains/entities';
 import { ApiProperty } from '@nestjs/swagger';
+import { postDocument } from '../entities/post.entity';
+
+export type GetPostsVariant = 'basic' | 'popular' | 'new' | 'filter';
+export type GetPostsByUserVariant = 'liked' | 'bookmarks';
+
+export interface GetPostsResponse {
+  posts: postDocument[];
+  pages: number;
+  currentPage: number;
+  limit: number;
+}
+
+export class LikePostResponse {
+  @ApiProperty({ example: 'Вы добавиили статью в понравившиеся!' })
+  msg: string;
+}
+
+export class UnLikePostResponse {
+  @ApiProperty({ example: 'Вы удалили статью из понравившихся!' })
+  msg: string;
+}
+
+export class BookmarkPostResponse {
+  @ApiProperty({ example: 'Вы добавиили статью в закладки!' })
+  msg: string;
+}
+
+export class UnBookmarkPostResponse {
+  @ApiProperty({ example: 'Вы удалили статью из закладок!' })
+  msg: string;
+}
 
 export class CreatePostResponse {
   @ApiProperty({ example: '64bb496f5d0c6476d977bd92' })

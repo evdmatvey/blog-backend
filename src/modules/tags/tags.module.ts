@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
+import { PostsModule } from '@/modules/posts/posts.module';
 import {
   CreateTagUseCaseSymbol,
   SearchTagUseCaseSymbol,
@@ -51,6 +52,9 @@ import { UpdateTagService } from '@/domains/services/update-tag.service';
     },
   ],
   exports: [TagsRepository],
-  imports: [MongooseModule.forFeature([{ name: Tag.name, schema: tagSchema }])],
+  imports: [
+    PostsModule,
+    MongooseModule.forFeature([{ name: Tag.name, schema: tagSchema }]),
+  ],
 })
 export class TagsModule {}

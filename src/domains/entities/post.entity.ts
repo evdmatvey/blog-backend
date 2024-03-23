@@ -1,4 +1,3 @@
-import { TagEntity } from './tag.entity';
 import { UserId } from './user.entity';
 
 export type PostStatus = 'approved' | 'preview';

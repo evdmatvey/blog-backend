@@ -29,3 +29,14 @@ export class UserResponse {
   @ApiProperty({ example: '2023-11-17T04:37:21.722Z' })
   updatedAt: string;
 }
+
+export class AuthorResponse {
+  @ApiProperty({ example: '64bb496f5d0c6476d977bd93' })
+  _id: string;
+
+  @ApiProperty({ example: '@evd.matvey' })
+  nickname: string;
+
+  @ApiProperty({ example: '/uploads/99e7b94b8f7473d027.jpg' })
+  avatar: string;
+}
