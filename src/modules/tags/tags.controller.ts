@@ -12,6 +12,7 @@ import {
   ForbiddenException,
 } from '@nestjs/common';
 import { ApiTags, ApiBearerAuth, ApiOkResponse } from '@nestjs/swagger';
+import { Message } from '@/utils/types/Message';
 import {
   CreateTagCommand,
   CreateTagUseCase,
@@ -30,12 +31,11 @@ import { TagsRepository } from './tags.repository';
 import { JwtAuthGuard } from '../auth/guards/jwt.guard';
 import { CreateTagDto } from './dto/create-tag.dto';
 import { UpdateTagDto } from './dto/update-tag.dto';
-import { DeleteTagResponse, TagResponse, Message } from './types';
+import { DeleteTagResponse, TagResponse } from './types';
+import { PostsRepository } from '../posts/posts.repository';
 
-@UseGuards(JwtAuthGuard, RoleGuard)
 @Controller('tags')
 @ApiTags('Tags')
-@ApiBearerAuth()
 export class TagsController {
   constructor(
     @Inject(CreateTagUseCaseSymbol)
@@ -45,10 +45,13 @@ export class TagsController {
     @Inject(UpdateTagUseCaseSymbol)
     private readonly _updateTagUseCase: UpdateTagUseCase,
     private readonly _tagRepository: TagsRepository,
+    private readonly _postsRepository: PostsRepository,
   ) {}
 
   @Post()
+  @UseGuards(JwtAuthGuard, RoleGuard)
   @Roles([RoleEntity.AUTHOR, RoleEntity.ADMIN])
+  @ApiBearerAuth()
   @ApiOkResponse({ type: TagResponse })
   async create(@Body() createTagDto: CreateTagDto) {
     const command = new CreateTagCommand(createTagDto.title);
@@ -57,12 +60,22 @@ export class TagsController {
   }
 
   @Get()
+  @UseGuards(JwtAuthGuard, RoleGuard)
+  @ApiBearerAuth()
   @ApiOkResponse({ type: TagResponse, isArray: true })
   findAll() {
     return this._tagRepository.getAll();
   }
 
+  @Get('/popular')
+  @ApiOkResponse({ type: TagResponse, isArray: true })
+  getPopular() {
+    return this._postsRepository.getPopularTags();
+  }
+
   @Get('/search')
+  @UseGuards(JwtAuthGuard, RoleGuard)
+  @ApiBearerAuth()
   @ApiOkResponse({ type: TagResponse, isArray: true })
   async search(@Query('title') title: string) {
     const command = new SearchTagCommand(title);
@@ -70,9 +83,11 @@ export class TagsController {
     return tags;
   }
 
-  @Roles([RoleEntity.ADMIN])
-  @ApiOkResponse({ type: TagResponse })
   @Get(':id')
+  @UseGuards(JwtAuthGuard, RoleGuard)
+  @Roles([RoleEntity.ADMIN])
+  @ApiBearerAuth()
+  @ApiOkResponse({ type: TagResponse })
   async findOne(@Param('id') id: string) {
     const tag = await this._tagRepository.getOne(id);
 
@@ -81,8 +96,10 @@ export class TagsController {
     return tag;
   }
 
-  @Roles([RoleEntity.ADMIN])
   @Delete(':id')
+  @UseGuards(JwtAuthGuard, RoleGuard)
+  @Roles([RoleEntity.ADMIN])
+  @ApiBearerAuth()
   @ApiOkResponse({ type: DeleteTagResponse })
   async delete(@Param('id') id: string): Promise<Message> {
     try {
@@ -95,8 +112,10 @@ export class TagsController {
     }
   }
 
-  @Roles([RoleEntity.ADMIN])
   @Put(':id')
+  @UseGuards(JwtAuthGuard, RoleGuard)
+  @Roles([RoleEntity.ADMIN])
+  @ApiBearerAuth()
   @ApiOkResponse({ type: TagResponse })
   async update(@Param('id') id: string, @Body() dto: UpdateTagDto) {
     try {

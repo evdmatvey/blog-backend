@@ -1,9 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
 
-export interface Message {
-  msg: string;
-}
-
 export class DeleteTagResponse {
   @ApiProperty({ example: 'Вы успешно удалили тег: ' })
   msg: string;

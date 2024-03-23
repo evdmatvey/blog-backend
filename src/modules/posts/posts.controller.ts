@@ -10,12 +10,15 @@ import {
   NotFoundException,
   Patch,
   Delete,
+  Param,
 } from '@nestjs/common';
 import { ApiBearerAuth, ApiOkResponse, ApiTags } from '@nestjs/swagger';
 import { JwtAuthGuard } from '@/modules/auth/guards/jwt.guard';
 import { RoleGuard } from '@/modules/auth/guards/role.guard';
+import { UsersRepository } from '@/modules/users/users.repository';
 import { Roles } from '@/decorators/role.decorator';
 import { UserId } from '@/decorators/user-id.decorator';
+import { Message } from '@/utils/types/Message';
 import { RoleEntity } from '@/domains/entities';
 import {
   CreatePostCommand,
@@ -27,8 +30,12 @@ import { PostsRepository } from './posts.repository';
 import {
   ApprovedPostResponse,
   ApprovingMessage,
+  BookmarkPostResponse,
   CreatePostResponse,
   DeletingMessage,
+  GetPostsByUserVariant,
+  GetPostsVariant,
+  LikePostResponse,
   PostResponse,
 } from './types';
 
@@ -39,6 +46,7 @@ export class PostsController {
     @Inject(CreatePostUseCaseSymbol)
     private readonly _createPostUseCase: CreatePostUseCase,
     private readonly _postsRepository: PostsRepository,
+    private readonly _usersRepository: UsersRepository,
   ) {}
 
   @Post()
@@ -76,15 +84,46 @@ export class PostsController {
     return this._postsRepository.getAll();
   }
 
-  @Get('/approved')
+  @Get('/search/?')
   @ApiOkResponse({ type: ApprovedPostResponse, isArray: true })
-  getAllApproved() {
-    return this._postsRepository.getAllByStatus('approved');
+  async search(@Query('title') title: string) {
+    return this._postsRepository.search(title.toLowerCase());
+  }
+
+  @Get('/approved/?')
+  @ApiOkResponse({ type: ApprovedPostResponse, isArray: true })
+  getAllApproved(
+    @Query('variant') variant: GetPostsVariant,
+    @Query('page') page: number,
+    @Query('limit') limit: number,
+    @Query('tagId') tagId: string,
+    @Query('authorId') authorId: string,
+  ) {
+    return this._postsRepository.getPosts(
+      variant,
+      page,
+      limit,
+      tagId,
+      authorId,
+    );
+  }
+
+  @Get('/by-user/?')
+  @ApiOkResponse({ type: ApprovedPostResponse, isArray: true })
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  getByUser(
+    @UserId() id: string,
+    @Query('variant') variant: GetPostsByUserVariant,
+    @Query('page') page: number,
+    @Query('limit') limit: number,
+  ) {
+    return this._usersRepository.getPostsByUser(id, variant, page, limit);
   }
 
   @Get('/approved/:id')
   @ApiOkResponse({ type: ApprovedPostResponse })
-  async getOneApproved(@Query('id') id: string) {
+  async getOneApproved(@Param('id') id: string) {
     const post = await this._postsRepository.getOneByStatus(id, 'approved');
     if (!post) throw new NotFoundException('Статья не найдена');
 
@@ -105,7 +144,7 @@ export class PostsController {
   @ApiBearerAuth()
   @UseGuards(JwtAuthGuard, RoleGuard)
   @Roles([RoleEntity.AUTHOR, RoleEntity.ADMIN])
-  async getOneForPreview(@Query('id') id: string) {
+  async getOneForPreview(@Param('id') id: string) {
     const post = await this._postsRepository.getOneByStatus(id, 'preview');
     if (!post) throw new NotFoundException('Статья не найдена');
 
@@ -117,7 +156,7 @@ export class PostsController {
   @ApiBearerAuth()
   @UseGuards(JwtAuthGuard, RoleGuard)
   @Roles([RoleEntity.ADMIN])
-  getOne(@Query('id') id: string) {
+  getOne(@Param('id') id: string) {
     return this._postsRepository.getOne(id);
   }
 
@@ -126,7 +165,7 @@ export class PostsController {
   @UseGuards(JwtAuthGuard, RoleGuard)
   @Roles([RoleEntity.ADMIN])
   @ApiBearerAuth()
-  async approvePost(@Query('id') id: string) {
+  async approvePost(@Param('id') id: string): Promise<Message> {
     const post = await this._postsRepository.approvePostById(id);
 
     return {
@@ -142,11 +181,40 @@ export class PostsController {
   @UseGuards(JwtAuthGuard, RoleGuard)
   @Roles([RoleEntity.ADMIN])
   @ApiBearerAuth()
-  async deletePost(@Query('id') id: string) {
+  async deletePost(@Param('id') id: string): Promise<Message> {
     const post = await this._postsRepository.delete(id);
 
     return {
       msg: `Вы успешно удалили статью! Название: ${post.title.slice(0, 10)}...`,
     };
+  }
+
+  @Patch('/likePost/:postId')
+  @ApiOkResponse({ type: LikePostResponse })
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  async likePost(
+    @UserId() id: string,
+    @Param('postId') postId: string,
+  ): Promise<Message> {
+    const condition: boolean = await this._usersRepository.likePost(id, postId);
+
+    return this._postsRepository.likePost(postId, condition);
+  }
+
+  @Patch('/bookmarkPost/:postId')
+  @ApiOkResponse({ type: BookmarkPostResponse })
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  async bookmarkPost(
+    @UserId() id: string,
+    @Param('postId') postId: string,
+  ): Promise<Message> {
+    const response: Message = await this._usersRepository.bookmarkPost(
+      id,
+      postId,
+    );
+
+    return response;
   }
 }

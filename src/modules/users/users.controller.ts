@@ -18,44 +18,50 @@ import {
 import { UsersRepository } from './users.repository';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UpdateUserPasswordDto } from './dto/update-user-password.dto';
-import { UserResponse } from './types';
+import { AuthorResponse, UserResponse } from './types';
+import { PostsRepository } from '../posts/posts.repository';
 
 @Controller('users')
 @ApiTags('Users')
-@ApiBearerAuth()
 export class UsersController {
   constructor(
     @Inject(UpdateUserUseCaseSymbol)
     private readonly _updateUserUseCase: UpdateUserUseCase,
     @Inject(UpdateUserPasswordUseCaseSymbol)
     private readonly _updateUserPasswordUseCase: UpdateUserPasswordUseCase,
-    private readonly usersRepository: UsersRepository,
+    private readonly _usersRepository: UsersRepository,
+    private readonly _postsRepository: PostsRepository,
   ) {}
 
   @Get('/me')
+  @ApiBearerAuth()
   @ApiOkResponse({ type: UserResponse })
   @UseGuards(JwtAuthGuard)
-  getMe(@UserId() id: string) {
-    return this.usersRepository.findById(id);
+  async getMe(@UserId() id: string) {
+    return this._usersRepository.findById(id);
   }
 
-  getAll() {
-    return this.usersRepository.getAll();
+  @Get('/popular')
+  @ApiOkResponse({ type: AuthorResponse, isArray: true })
+  async getPopularAuthors() {
+    return this._postsRepository.getPopularAuthors();
   }
 
   @Put('/update')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
   @ApiBody({ type: UpdateUserDto })
   @ApiOkResponse({ type: UserResponse })
-  @UseGuards(JwtAuthGuard)
   async update(@UserId() id: string, @Body() dto: UpdateUserDto) {
     const command = new UpdateUserCommand(id, dto.email, dto.desc, dto.avatar);
     return (await this._updateUserUseCase.updateUser(command)).getUserData();
   }
 
   @Put('/update/password')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
   @ApiBody({ type: UpdateUserPasswordDto })
   @ApiOkResponse({ type: UserResponse })
-  @UseGuards(JwtAuthGuard)
   async updatePassword(
     @UserId() id: string,
     @Body() dto: UpdateUserPasswordDto,

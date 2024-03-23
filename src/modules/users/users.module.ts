@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { Module, forwardRef } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import {
   UpdateUserUseCaseSymbol,
@@ -8,7 +8,8 @@ import {
   UpdateUserService,
   UpdateUserPasswordService,
 } from '@/domains/services';
-import { UserRepositoryPort } from '@/domains/ports/out/user-repository.port';
+import { UserRepositoryPort } from '@/domains/ports/out';
+import { PostsModule } from '@/modules/posts/posts.module';
 import { UsersController } from './users.controller';
 import { UsersRepository } from './users.repository';
 import { User, userSchema } from './entities/user.entity';
@@ -42,6 +43,7 @@ import { User, userSchema } from './entities/user.entity';
   ],
   exports: [UsersRepository],
   imports: [
+    forwardRef(() => PostsModule),
     MongooseModule.forFeature([{ name: User.name, schema: userSchema }]),
   ],
 })
